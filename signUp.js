@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const { userSchema } = require('./userSchema');
 const app = express();
 const PORT  = process.env.PORT || 4000;
@@ -17,19 +18,24 @@ app.get('/',(req,res)=>{
 });
 
 app.post('/signUp',async(req,res)=>{
-    try {
-        const user = new userSchema({
-            firstName:req.body.firstName,
-            lastName:req.body.lastName,
-            email:req.body.email,
-            tel:req.body.tel,
-            country:req.body.country,
-            password:req.body.password
-        });
-         await user.save()
-    } catch (error) {
-        res.send(error.message)
-    }
+bcrypt.genSalt(10,(err,salt)=>{
+    bcrypt.hash(req.body.password,salt,async(err,hash)=>{
+        try {
+            const user = new userSchema({
+                firstName:req.body.firstName,
+                lastName:req.body.lastName,
+                email:req.body.email,
+                tel:req.body.tel,
+                country:req.body.country,
+                password:hash
+            });
+             await user.save()
+        } catch (error) {
+            res.send(error.message)
+        }
+    })
+})
+  
    
 
 })
