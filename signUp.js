@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { userSchema } = require('./userSchema');
@@ -30,6 +31,28 @@ bcrypt.genSalt(10,(err,salt)=>{
                 password:hash
             });
              await user.save()
+      const transporter = nodemailer.createTransport({
+          service:"hotmail",
+          auth:{
+              user:"hallcoder25@outlook.com",
+              password:"!!!?!?123Abana"
+          }
+      });
+
+      const options = {
+          from:"hallcoder25@outlook.com",
+          to:req.body.email,
+          subject:"Node nodemailer test activity undergoing",
+          text:`Hello ${req.body.name} this is an email from the node app Created By M.Apotre!!`
+      }
+
+      transporter.sendMail(options, (err,info)=>{
+          if(err){
+              console.log(err.message);
+              return;
+          }
+          console.log("Sent"+ info.response);
+      })
              res.send("User registered successfully")
         } catch (error) {
             res.send(error.message)
