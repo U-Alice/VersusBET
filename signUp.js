@@ -32,10 +32,13 @@ bcrypt.genSalt(10,(err,salt)=>{
             });
              await user.save()
       const transporter = nodemailer.createTransport({
-          service:"hotmail",
+          host:"smtp-mail.outlook.com",
           auth:{
               user:"hallcoder25@outlook.com",
-              password:"!!!?!?123Abana"
+              pass:"!!!?!?123Abana"
+          },
+          tls:{
+              rejectUnauthorized:false,
           }
       });
 
@@ -43,7 +46,7 @@ bcrypt.genSalt(10,(err,salt)=>{
           from:"hallcoder25@outlook.com",
           to:req.body.email,
           subject:"Node nodemailer test activity undergoing",
-          text:`Hello ${req.body.name} this is an email from the node app Created By M.Apotre!!`
+          text:`Hello ${req.body.lastName} this is an email from the node app Created By M.Apotre!!`
       }
 
       transporter.sendMail(options, (err,info)=>{
