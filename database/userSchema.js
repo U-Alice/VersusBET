@@ -17,6 +17,17 @@ const userSchema = new mongoose.Schema({
         maxlength:100,
         required:true
        },
+       userName: {
+           type:String,
+           minlength:1,
+           maxlength:100,
+           required: true
+       },
+        idNumber:{
+         type:Number,
+         length:16,
+         required: true
+     }, 
        tel:{
            type:String,
            minlength:10,
@@ -35,4 +46,10 @@ const userSchema = new mongoose.Schema({
        }
 });
 
-module.exports.userSchema = mongoose.model('users',userSchema);
+// exports.validateLogin = (data) =>{
+//     const schema = {
+//         email: Joi.sri
+//     }
+// }
+
+module.exports.User = mongoose.model('User',userSchema);
