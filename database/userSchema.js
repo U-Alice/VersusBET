@@ -46,10 +46,4 @@ const userSchema = new mongoose.Schema({
        }
 });
 
-// exports.validateLogin = (data) =>{
-//     const schema = {
-//         email: Joi.sri
-//     }
-// }
-
 module.exports.User = mongoose.model('User',userSchema);
