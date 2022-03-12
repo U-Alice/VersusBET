@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const { resetPassword, resetPasswordToken } = require('../handlers/userservices.js')
+const { resetPassword } = require('../handlers/userservices.js')
 
 const password = new mongoose.Schema({
 email:{
@@ -18,8 +18,7 @@ expireTime:{
     type: String,
     required: true
 }
-
 })
-passwordReset.methods.resetPasswordToken = resetPasswordToken();
 
-module.exports.password = mongoose.model('passwordReset', password)
+
+module.exports.Password = mongoose.model('passwordReset', password)
