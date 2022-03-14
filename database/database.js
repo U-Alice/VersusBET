@@ -3,4 +3,5 @@ const mongoose = require('mongoose')
 
 module.exports.db = async() =>{ 
     mongoose.connect(URL)
+    .then(_=>console.log("Connected to the db"))
 }
