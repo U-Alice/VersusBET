@@ -10,7 +10,7 @@ async function start(){
 const database = await db()
 setupRouter(app, database)
 app.listen(PORT, ()=>{
-    console.log("connected");
+    console.log(`Listening at port :${PORT}`);
 
 })
 app.get('/',(req,res)=>{
