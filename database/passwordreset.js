@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const { resetPassword } = require('../handlers/userservices.js')
 
 const password = new mongoose.Schema({
 email:{
@@ -10,12 +9,8 @@ User_id:{
     type:String,
     required: true
 },
-resetPasswordToken:{
+OTP:{
     type:String,
-    required: true, 
-},
-expireTime:{
-    type: String,
     required: true
 }
 })

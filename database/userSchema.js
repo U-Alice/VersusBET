@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const emailMongo = require('mongoose-type-email');
+const joi = require('joi')
 const userSchema = new mongoose.Schema({
        email:{
            type:String,
@@ -47,3 +48,18 @@ const userSchema = new mongoose.Schema({
 });
 
 module.exports.User = mongoose.model('User',userSchema);
+
+const validate = (user)=>{
+const Schema = joi.object({
+    firstName:joi.string().required().label('firstName'),
+    lastName:joi.string().required().label('lastName'),
+    userName:joi.string().required().label('userName'),
+    email:joi.string().email().required().label('email'),
+    country:joi.string().required().label('country'),
+    telNumber: joi.string().required().label('telNumber'),
+    password: joi().string().required().min(8).label("password"),
+    idNumber:joi.number().required().label('telNumber').min(10).max(10)
+})
+return Schema.validate(user, Schema)
+}
+module.exports.validate = validate
