@@ -72,7 +72,7 @@ module.exports.register = (db) => {
     }
 }
 
-module.exports.login = (db) => {
+module.exports.login = () => {
     return async (req, res) => {
         const user = await User.findOne({ email: req.body.email, password: req.body.password })
         if (!user) {
