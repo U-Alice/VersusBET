@@ -18,7 +18,6 @@ module.exports.register = (db) => {
                 if (result) {
                     return res.send("The email is taken !!!")
                 }
-
                 try {
                     const user = new User({
                         firstName: req.body.firstName,
@@ -112,8 +111,8 @@ module.exports.forgotPassword = (db) => {
         const transporter = nodemailer.createTransport({
             service: 'Gmail',
             auth: {
-                user: "umugwanezaalice22@gmail.com",
-                pass: "061415171820"
+                user: "",
+                pass: ""
             }
         })
         const mailOptions = {
@@ -123,7 +122,7 @@ module.exports.forgotPassword = (db) => {
             html: `
             <html>
            <h6> Hi ${user.firstName} </h6>\n
-           <p> below is the verification code for your password reset request <br></p>
+           <p> below is the verification code for your password reset request <br> This code is valid for 15 minutes</p>
             <h3>${OTP}</h3>
             </html>
             `

@@ -60,6 +60,6 @@ const Schema = joi.object({
     password: joi().string().required().min(8).label("password"),
     idNumber:joi.number().required().label('telNumber').min(10).max(10)
 })
-return Schema.validate(user, Schema)
+return Schema.validate(user)
 }
 module.exports.validate = validate

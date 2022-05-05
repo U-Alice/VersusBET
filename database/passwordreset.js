@@ -12,7 +12,8 @@ User_id:{
 OTP:{
     type:String,
     required: true
-}
+},
+createdAt:{type: new Date(Date.now()), expires: 900}
 })
 
 
