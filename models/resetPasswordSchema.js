@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const { resetPassword } = require('../handlers/userservices.js')
+const { resetPassword } = require('../controllers/userController.js')
 
 const password = new mongoose.Schema({
 email:{
