@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const jwt  = require('jsonwebtoken');
-require('dotenv').config()
+const emailMongo = require('mongoose-type-email');
+const joi = require('joi')
 const userSchema = new mongoose.Schema({
        email:{
            type:String,
@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
            maxlength:100,
            required: true
        },
-        NID:{
+        idNumber:{
          type:Number,
          length:16,
          required: true
@@ -44,20 +44,22 @@ const userSchema = new mongoose.Schema({
        country:{
          type:String,
          required:true
-       },
-       isAdmin:Boolean,
-       activeBets:{
-           type:Array,
-       },
-       cardNumber:{
-           type:String
-       },
-       paymentMethod:{
-           type:String,
        }
 });
-userSchema.methods.generateAuthToken = ()=>{
-    const token = jwt.sign({_id:this._id,isAdmin:this.isAdmin,NID:this.NID}, process.env.JWT_SECRET_KEY);
-    return token;
-}
+
 module.exports.User = mongoose.model('User',userSchema);
+
+const validate = (user)=>{
+const Schema = joi.object({
+    firstName:joi.string().required().label('firstName'),
+    lastName:joi.string().required().label('lastName'),
+    userName:joi.string().required().label('userName'),
+    email:joi.string().email().required().label('email'),
+    country:joi.string().required().label('country'),
+    telNumber: joi.string().required().label('telNumber'),
+    password: joi().string().required().min(8).label("password"),
+    idNumber:joi.number().required().label('telNumber').min(10).max(10)
+})
+return Schema.validate(user)
+}
+module.exports.validate = validate
