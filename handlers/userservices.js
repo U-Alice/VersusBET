@@ -1,11 +1,12 @@
 
 const { db } = require("../database/database")
 const { User } = require('../database/userSchema.js')
-const { generateToken, authenticateToken } = require('./jwt')
+const { generateToken } = require('./jwt')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer');
-const crypto = require('crypto');
 const { Password } = require("../database/passwordreset.js");
+const otpGenerator = require("otp-generator");
+
 
 
 
@@ -17,7 +18,6 @@ module.exports.register = (db) => {
                 if (result) {
                     return res.send("The email is taken !!!")
                 }
-
                 try {
                     const user = new User({
                         firstName: req.body.firstName,
@@ -88,45 +88,45 @@ module.exports.login = () => {
     }
 }
 
-module.exports.resetPassword = () => {
-    return () => {
-        this.resetPasswordToken = crypto.randomBytes(20).toString('hex');
-        this.expireTime = Date.now() + 3600000;
-    }
-}
 
-module.exports.recover = (db) => {
+module.exports.forgotPassword = (db) => {
     return async (req, res) => {
-        const user = await User.findOne({ email: req.body.email, password: req.body.password })
-        const userDetails = new Password({
-            email: user.email,
-            User_id: user._id,
-            resetPasswordToken: crypto.randomBytes(20).toString('hex'),
-            expireTime: Date.now() + 3600000
+        const user = await User.findOne({ email: req.body.email })
+        if (!user) {
+            res.status(400).json({ message: 'user not found' })
+        }
+        const OTP = otpGenerator.generate(6, { upperCaseAlphabets: true, specialChars: false })
+        let userDetails = await Password.findOne({email: user.email})
+        if(userDetails){
+            Password.findOneAndUpdate({email:userDetails.email}, {OTP:OTP})
+        }else{
+        userDetails=new Password({
+            email:user.email,
+            OTP:OTP,
+            User_id: user.id
         })
-        let link = `http://localhost:4000/password/reset`
-        let testAccount = await nodemailer.createTestAccount()
+        await userDetails.save()
+        }
+        
         const transporter = nodemailer.createTransport({
-            host: "smtp.ethereal.email",
-            port: 587,
-            secure: false,
+            service: 'Gmail',
             auth: {
-                user: testAccount.user,
-                pass: testAccount.pass
+                user: "",
+                pass: ""
             }
         })
         const mailOptions = {
             to: user.email,
             from: "umugwanezaalice22@gmail.com",
             subject: "password reset request",
-            text: `hi ${user.firstName} \n follow the link ${link}`
+            html: `
+            <html>
+           <h6> Hi ${user.firstName} </h6>\n
+           <p> below is the verification code for your password reset request <br> This code is valid for 15 minutes</p>
+            <h3>${OTP}</h3>
+            </html>
+            `
         }
-        if (!user) {
-            res.status(400).json({ message: 'user not found' })
-        }
-        await userDetails.save()
-
-        
         await transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.log(error)
@@ -137,8 +137,25 @@ module.exports.recover = (db) => {
     }
 }
 
-
-
-
-
-    
+module.exports.verifyEmail = (db) => {
+    return async (req, res) => {
+        const updatePassword = await Password.findOne({ email: req.body.email, OTP: req.body.OTP })
+        if (!updatePassword) {
+            res.status(401).send('Invalide OTP')
+        }
+        res.status(200).send('OTP validation successfull')
+    }
+}
+module.exports.updatePassword = () => {
+    return async (req, res) => {
+        const salt = await bcrypt.genSalt(10)
+        const userUpdate = await Password.findOne() 
+        const hashed = await bcrypt.hash(req.body.password, salt)
+        User.findOneAndUpdate({email:userUpdate.email}, { password:  hashed}, () => {
+            res.send('password updated successfully')
+        })
+        Password.findOneAndRemove({email:userUpdate.email},()=>{
+            console.log('userUpdate removed')
+        })
+    }
+}
