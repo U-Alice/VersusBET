@@ -22,6 +22,7 @@
     "mongoose": "^6.2.4",
     "mongoose-type-email": "^1.1.2",
     "nodemailer": "^6.7.2",
+    "nodemon": "^2.0.16",
     "otp-generator": "^4.0.0"
   }
 }
