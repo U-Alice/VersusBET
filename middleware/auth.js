@@ -2,8 +2,8 @@ const jwt  = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
-module.exports = function(req,res,next){
-    const token = req.cookies.token;
+module.exports.auth = function(req,res,next){
+    const token = req.cookies.token;    
     if(!token) return res.status(401).json({
         message:'NO  token found!',
         status:'failed',
@@ -20,3 +20,4 @@ module.exports = function(req,res,next){
          });
     }
 }
+module.exports.generateAuth

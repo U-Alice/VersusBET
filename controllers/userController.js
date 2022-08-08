@@ -1,6 +1,5 @@
 const { db } = require("../utils/database");
 const { User } = require("../models/userSchema.js");
-// const { authenticateToken } = require("./jwt");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
@@ -58,12 +57,12 @@ module.exports.login = (db) => {
     }).exec();
       console.log('WE are building login')
       console.log(user)
-      // if (!user) {
-      //   return res.status(400).json({ 
-      //     message: "User not found" ,
-      //     status: "failed"
-      //   });
-      // }
+      if (!user) {
+        return res.status(404).json({ 
+          message: "User not found" ,
+          status: "failed"
+        });
+      }
     if (!bcrypt.compareSync(req.body.password, user.password)) {
      return  res.status(400).send({ message: "Invalid password" });
     } else {
@@ -130,7 +129,7 @@ module.exports.verifyEmail = (db) => {
   return async (req, res) => {
       const updatePassword = await Password.findOne({ email: req.body.email, OTP: req.body.OTP })
       if (!updatePassword) {
-          res.status(401).send('Invalide OTP')
+          res.status(401).send('Invalid OTP')
       }
       res.status(200).send('OTP validation successfull')
   }
@@ -138,7 +137,7 @@ module.exports.verifyEmail = (db) => {
 module.exports.updatePassword = () => {
   return async (req, res) => {
       const salt = await bcrypt.genSalt(10)
-      const userUpdate = await Password.findOne() 
+      const userUpdate = await Password.findById({user}) 
       const hashed = await bcrypt.hash(req.body.password, salt)
       User.findOneAndUpdate({email:userUpdate.email}, { password:  hashed}, () => {
           res.send('password updated successfully')
@@ -146,5 +145,6 @@ module.exports.updatePassword = () => {
       Password.findOneAndRemove({email:userUpdate.email},()=>{
           console.log('userUpdate removed')
       })
+// const { authenticateToken } = require("./jwt");
   }
 }
